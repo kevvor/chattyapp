@@ -22,16 +22,7 @@ class App extends Component {
     console.log("componentDidMount <App />");
 
     this.socket.onopen = (event) => {
-
       console.log('Connected to server')
-
-      const newColor = {color: parsedMsgs.color}
-
-      const userColor = Object.assign(this.state.currentUser, newColor);
-
-      console.log(userColor);
-
-      this.setState({currentUser: userColor})
     }
 
     this.socket.onmessage = (event) => {
@@ -41,6 +32,10 @@ class App extends Component {
         username: parsedMsgs.username,
         content: parsedMsgs.content
       }
+      const newColor = {color: parsedMsgs.color}
+      const userColor = Object.assign(this.state.currentUser, newColor);
+      console.log(userColor);
+      this.setState({currentUser: userColor})
 
       if (parsedMsgs.type === 'incomingMessage' || parsedMsgs.type === 'incomingNotification') {
         const messages = this.state.messages.concat(newMsg)
