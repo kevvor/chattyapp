@@ -10,7 +10,6 @@ class App extends Component {
     this.state = {
       currentUser: {name: 'anon'},
       messages: [],
-      // notifications: [],
       number: 0
     };
   }
@@ -35,7 +34,9 @@ class App extends Component {
       const newColor = {color: parsedMsgs.color}
       const userColor = Object.assign(this.state.currentUser, newColor);
       console.log(userColor);
+
       this.setState({currentUser: userColor})
+
 
       if (parsedMsgs.type === 'incomingMessage' || parsedMsgs.type === 'incomingNotification') {
         const messages = this.state.messages.concat(newMsg)
@@ -60,6 +61,7 @@ class App extends Component {
           content: event.target.value,
           color: this.state.currentUser.color
       }
+      console.log(postMessage)
       this.socket.send(JSON.stringify(postMessage));
       event.target.value = '';
     }
@@ -82,12 +84,11 @@ class App extends Component {
 
   render() {
     return (
-    <div className ="wrapper">
-      <NavBar numClients = {this.state.numClients} />
-      <MessageList messages = {this.state.messages}
-      />
-      <ChatBar currentUser = {this.state.currentUser} newUsername = {this.newUsername.bind(this)} newChatMessage = {this.newChatMessage.bind(this)} />
-    </div>
+      <div className ="wrapper">
+        <NavBar numClients = {this.state.numClients} />
+        <MessageList currentUser = {this.state.currentUser} messages = {this.state.messages} />
+        <ChatBar currentUser = {this.state.currentUser} newUsername = {this.newUsername.bind(this)} newChatMessage = {this.newChatMessage.bind(this)} />
+      </div>
     );
   }
 }
