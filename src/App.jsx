@@ -26,14 +26,15 @@ class App extends Component {
 
     this.socket.onmessage = (event) => {
       const parsedMsgs = JSON.parse(event.data);
-      const newMsg = {
-        type: parsedMsgs.type,
-        username: parsedMsgs.username,
-        content: parsedMsgs.content
-      }
+
       if (parsedMsgs.type === 'incomingMessage' || parsedMsgs.type === 'incomingNotification') {
-        const messages = this.state.messages.concat(newMsg)
+        const messages = this.state.messages.concat(parsedMsgs)
         this.setState({messages: messages})
+      }
+      else if (parsedMsgs.type === 'usercolor') {
+        const newColor = {color: parsedMsgs.color}
+        const userColor = Object.assign(this.state.currentUser, newColor);
+        this.setState({currentUser: userColor})
       }
       else {
         this.setState({numClients: parsedMsgs.number})
@@ -54,7 +55,6 @@ class App extends Component {
           content: event.target.value,
           color: this.state.currentUser.color
       }
-      console.log(postMessage)
       this.socket.send(JSON.stringify(postMessage));
       event.target.value = '';
     }
@@ -63,7 +63,8 @@ class App extends Component {
   newUsername(event) {
     if (event.keyCode === 13) {
       const newUsername = {
-        name: event.target.value
+        name: event.target.value,
+        color: this.state.currentUser.color
       }
       event.target.blur()
       const userNotification = {

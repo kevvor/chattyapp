@@ -8,7 +8,8 @@ class MessageList extends Component {
       <div className="MessageList">
         {
           this.props.messages.map(function(object, index) {
-            return <Message key = {index} username = {object.username} content = {object.content} type = {object.type} />
+            console.log(object)
+            return <Message color= {object.color} key = {index} username = {object.username} content = {object.content} type = {object.type} />
           })
         }
       </div>
