@@ -1,8 +1,7 @@
 
 ### Run this project
 
-To run this project
-Download and start the chatty_server!
+To run this project clone and start the chatty_server!
 
 ```
 git@github.com:kevvor/chatty-server.git
