@@ -8,65 +8,92 @@ class App extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      currentUser: {name: "Bob"},
-      messages: [
-        {
-          username: "Bob",
-          content: "Has anyone seen my marbles?"
-        },
-        {
-          username: "Anonymous",
-          content: "No, I think you lost them. You lost your marbles Bob. You lost them for good."
-        }
-      ]
+      currentUser: {name: 'anon'},
+      messages: [],
+      // notifications: [],
+      number: 0
     };
   }
 
   componentDidMount() {
+
+    this.socket = new WebSocket('ws://localhost:3001/');
+
     console.log("componentDidMount <App />");
-    setTimeout(() => {
-      console.log("Simulating incoming message");
-      const newMessage = {
-        id: 3,
-        username: "Michelle",
-        content: "Hello there!"};
-      const messages = this.state.messages.concat(newMessage)
-      this.setState({messages: messages})
-    }, 3000);
-  }
 
+    this.socket.onopen = (event) => {
 
-  newChatMessage(event) {
+      console.log('Connected to server')
 
+      const newColor = {color: parsedMsgs.color}
 
-    if (event.keyCode === 13) {
+      const userColor = Object.assign(this.state.currentUser, newColor);
 
-    const incomingMsg = {
-        username: this.state.currentUser.name,
-        content: event.target.value
+      console.log(userColor);
+
+      this.setState({currentUser: userColor})
+    }
+
+    this.socket.onmessage = (event) => {
+      const parsedMsgs = JSON.parse(event.data);
+      const newMsg = {
+        type: parsedMsgs.type,
+        username: parsedMsgs.username,
+        content: parsedMsgs.content
       }
-      const msgs = this.state.messages.concat(incomingMsg)
-      this.setState({messages: msgs})
-      event.target.value = ''
+
+      if (parsedMsgs.type === 'incomingMessage' || parsedMsgs.type === 'incomingNotification') {
+        const messages = this.state.messages.concat(newMsg)
+        this.setState({messages: messages})
+      }
+      else {
+        this.setState({numClients: parsedMsgs.number})
+      }
+    }
+
+    this.socket.onclose = (event) => {
+      const parsedMsgs = JSON.parse(event.data);
+      this.setState({numClients: parsedMsgs.number})
     }
   }
 
+  newChatMessage(event) {
+    if (event.keyCode === 13) {
+      const postMessage = {
+          type: 'postMessage',
+          username: this.state.currentUser.name,
+          content: event.target.value,
+          color: this.state.currentUser.color
+      }
+      this.socket.send(JSON.stringify(postMessage));
+      event.target.value = '';
+    }
+  }
+
+  newUsername(event) {
+    if (event.keyCode === 13) {
+      const newUsername = {
+        name: event.target.value
+      }
+      event.target.blur()
+      const userNotification = {
+        type: 'postNotification',
+        content: `${this.state.currentUser.name} has changed their name to ${newUsername.name}`
+      }
+      this.setState({currentUser: newUsername})
+      this.socket.send(JSON.stringify(userNotification))
+    }
+  }
 
   render() {
     return (
     <div className ="wrapper">
-      <NavBar />
+      <NavBar numClients = {this.state.numClients} />
       <MessageList messages = {this.state.messages}
       />
-      <ChatBar currentUser = {this.state.currentUser} newChatMessage = {this.newChatMessage.bind(this)} />
+      <ChatBar currentUser = {this.state.currentUser} newUsername = {this.newUsername.bind(this)} newChatMessage = {this.newChatMessage.bind(this)} />
     </div>
     );
   }
 }
 export default App;
-
-
-
-
-
-
