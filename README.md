@@ -1,7 +1,7 @@
 
 ### Run this project
 
-To run this project clone and start the chatty_server!
+To run this project first clone and start the chatty_server!
 
 ```
 git@github.com:kevvor/chatty-server.git
@@ -9,7 +9,7 @@ npm install
 npm start
 ```
 
-Install the dependencies and start the server.
+Now install the dependencies from this repo and start the server.
 
 ```
 npm install
