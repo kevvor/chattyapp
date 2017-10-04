@@ -1,3 +1,8 @@
+### Project description
+
+React app built for Lighthouse Labs.
+
+Key technologies used for this project were React and Websockets.
 
 ### Run this project
 
