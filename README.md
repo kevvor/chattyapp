@@ -25,7 +25,7 @@ open http://localhost:3000
 
 ### Screenshots
 
-
+!["home page"](https://github.com/kevvor/chattyapp/blob/master/docs/home_screen.png?raw=true)
 
 ### Dependencies
 
